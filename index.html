@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>region Carousel</title>
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      #carousel {
+        position: relative;
+        width: 80vw;
+        height: 80vh;
+        overflow: hidden;
+        background-color: #000;
+      }
+
+      .carousel-item {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        background-color: #000;
+      }
+
+      .visible {
+        opacity: 1;
+      }
+
+      video {
+        width: 100%;
+        height: 100%;
+      }
+
+      #gameStartVideo {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="carousel"></div>
+
+    <video controls id="gameStartVideo">
+      <source src="Videos/Debut_jeu/Video_1.mp4" type="video/mp4" />
+    </video>
+
+    <script>
+      const firstVideo = document.getElementById("gameStartVideo");
+
+      firstVideo.onended = () => {
+        // Wait 40 seconds after first video ends
+        setTimeout(() => {
+          // Play second video
+          const secondVideo = document.createElement("video");
+          secondVideo.src = "Videos/Debut_jeu/Video_2.mp4";
+          secondVideo.controls = true;
+          secondVideo.autoplay = true;
+          secondVideo.classList.add("carousel-item", "visible");
+          secondVideo.style.zIndex = 999;
+
+          document.body.appendChild(secondVideo);
+        }, 5000); // 40 seconds in milliseconds
+      };
+
+      const carousel = document.getElementById("carousel");
+      let items = [];
+      let currentIndex = 0;
+      let intervalId = null;
+      let minigameNb = 0;
+      let miniGamePlaying = "";
+      let videoNB = 0;
+
+      function getRandomRegion() {
+        const regions = [
+          "ile-de-france",
+          "auvergne-rhone-alpes",
+          "bourgogne-franche-compte",
+          "bretagne",
+          "centre-val-de-loire",
+          "grand-est",
+          "hauts-de-france",
+          "normandie",
+          "nouvelle-aquitaine",
+          "occitanie",
+          "pays-de-la-loire",
+          "provence-alpes-cote-azur",
+        ];
+        const index = Math.floor(Math.random() * regions.length);
+        return regions[index];
+      }
+
+      function getRandomYear() {
+        const years = ["1930", "1950", "1970", "1990"];
+        const index = Math.floor(Math.random() * years.length);
+        return years[index];
+      }
+
+      const randomRegion = getRandomRegion();
+      const randomYear = getRandomYear();
+
+      console.log(`random region: ${randomRegion}`);
+
+      const miniGameHandler = (mgNb, data = "") => {
+        if (mgNb === "mg1") {
+          if (data === randomRegion) {
+            const video = document.createElement("video");
+            video.src = `Videos/Mini_jeu_1/Video_vrai.mp4`;
+            video.controls = true;
+            video.autoplay = true;
+            video.classList.add("carousel-item", "visible");
+            video.style.zIndex = 999; // Bring it to the front
+            video.onended = () => {
+              video.remove(); // Remove video after it's done
+              showNextItem(); // Continue carousel
+            };
+
+            carousel.appendChild(video);
+            video.play().catch((err) => {
+              console.warn("Failed to autoplay mini-game video:", err);
+            });
+          } else {
+            const video = document.createElement("video");
+            video.src = `Videos/Mini_jeu_1/Video_faux.mp4`;
+            video.controls = true;
+            video.autoplay = true;
+            video.classList.add("carousel-item", "visible");
+            video.style.zIndex = 999; // Bring it to the front
+            video.onended = () => {
+              video.remove(); // Remove video after it's done
+              showNextItem(); // Continue carousel
+            };
+
+            carousel.appendChild(video);
+            video.play().catch((err) => {
+              console.warn("Failed to autoplay mini-game video:", err);
+            });
+          }
+        } else if (mgNb === "mg2") {
+          console.log("mg2Lauching");
+
+          const video = document.createElement("video");
+          video.src = `Videos/Mini_jeu_2/${randomRegion}-Minijeu2.mp4`;
+          video.controls = true;
+          video.autoplay = true;
+          video.classList.add("carousel-item", "visible");
+          video.style.zIndex = 999; // Bring it to the front
+          video.onended = () => {
+            video.remove(); // Remove video after it's done
+            showNextItem(); // Continue carousel
+          };
+
+          carousel.appendChild(video);
+          video.play().catch((err) => {
+            console.warn("Failed to autoplay mini-game video:", err);
+          });
+        } else if (mgNb === "mg3") {
+          if (data === randomYear) {
+            const video = document.createElement("video");
+            video.src = `Videos/Mini_jeu_1/Video_vrai.mp4`;
+            video.controls = true;
+            video.autoplay = true;
+            video.classList.add("carousel-item", "visible");
+            video.style.zIndex = 999; // Bring it to the front
+            video.onended = () => {
+              video.remove(); // Remove video after it's done
+              showNextItem(); // Continue carousel
+            };
+
+            carousel.appendChild(video);
+            video.play().catch((err) => {
+              console.warn("Failed to autoplay mini-game video:", err);
+            });
+          } else {
+            const video = document.createElement("video");
+            video.src = `Videos/Mini_jeu_1/Video_faux.mp4`;
+            video.controls = true;
+            video.autoplay = true;
+            video.classList.add("carousel-item", "visible");
+            video.style.zIndex = 999; // Bring it to the front
+            video.onended = () => {
+              video.remove(); // Remove video after it's done
+              showNextItem(); // Continue carousel
+            };
+
+            carousel.appendChild(video);
+            video.play().catch((err) => {
+              console.warn("Failed to autoplay mini-game video:", err);
+            });
+          }
+        }
+      };
+
+      function showNextItem() {
+        const allItems = document.querySelectorAll(".carousel-item");
+        allItems.forEach((el) => el.classList.remove("visible"));
+
+        if (allItems.length === 0) return;
+
+        const currentItem = allItems[currentIndex];
+        currentItem.classList.add("visible");
+
+        if (currentItem.tagName === "VIDEO") {
+          videoNB += 1;
+          if (videoNB === 1) {
+            miniGamePlaying = "mg1";
+          } else if (videoNB === 2) {
+            miniGamePlaying = "mg2";
+          }
+          // Ensure autoplay works
+          currentItem
+            .play()
+            .then(() => {
+              // Playback started successfully
+            })
+            .catch((err) => {
+              console.warn("Autoplay failed:", err);
+            });
+
+          currentItem.onended = () => {
+            const src = currentItem.getAttribute("src");
+
+            // If this is Video_9, trigger the Mini Game 2 handler
+            if (
+              src &&
+              src.includes("Video_9.mp4") &&
+              miniGamePlaying === "mg2"
+            ) {
+              currentItem.remove();
+              miniGameHandler("mg2"); // This will append the -Minijeu2.mp4 video
+            } else {
+              currentIndex = (currentIndex + 1) % allItems.length;
+              //showNextItem();
+            }
+          };
+        } else {
+          intervalId = setTimeout(() => {
+            currentIndex = (currentIndex + 1) % allItems.length;
+            showNextItem();
+          }, 4000); // 30 seconds for images
+        }
+      }
+
+      function startCarousel(region, year) {
+        clearTimeout(intervalId);
+        carousel.innerHTML = "";
+        currentIndex = 0;
+
+        const totalImages = 15;
+        const videoCount = 2;
+        const itemsToLoad = [];
+
+        // Generate image entries
+        for (let i = 1; i <= totalImages; i++) {
+          itemsToLoad.push({
+            type: "image",
+            src: `cities/${region}/${year}/${i}img.jpg`,
+          });
+
+          //console.log(i);
+
+          if (i % 5 === 0 && i <= totalImages) {
+            const videoIndex = i / 5;
+            minigameNb += 1;
+            console.log(region, minigameNb);
+            if (minigameNb === 1) {
+              itemsToLoad.push({
+                type: "video",
+                src: `Videos/Mini_jeu_${minigameNb}/Questions/quest1_${randomRegion}_Minijeu${minigameNb}.mp4`,
+              });
+            } else if (minigameNb === 2) {
+              itemsToLoad.push({
+                type: "video",
+                src: `Videos/Mini_jeu_${minigameNb}/Video_9.mp4`,
+              });
+            } else if (minigameNb === 3) {
+              itemsToLoad.push({
+                type: "video",
+                src: `Videos/Mini_jeu_${minigameNb}/Questions/quest1_${randomYear}_Minijeu${minigameNb}.mp4`,
+              });
+            }
+          }
+        }
+
+        itemsToLoad.push({
+          type: "video",
+          src: `Videos/Fin_jeu/Fin.mp4`,
+        });
+
+        itemsToLoad.forEach((item) => {
+          let element;
+          if (item.type === "image") {
+            element = document.createElement("img");
+            element.src = encodeURI(item.src);
+          } else {
+            element = document.createElement("video");
+            element.src = encodeURI(item.src);
+            element.controls = false;
+            element.loop = false;
+          }
+
+          element.classList.add("carousel-item");
+          carousel.appendChild(element);
+        });
+
+        items = document.querySelectorAll(".carousel-item");
+
+        if (items.length > 0) {
+          showNextItem();
+        }
+      }
+
+      // Start with default region/year
+      startCarousel("auvergne-rhone-alpes", "1930");
+
+      const socket = new WebSocket("ws://192.168.10.140:8080");
+
+      socket.onopen = () => {
+        console.log("WebSocket connection established");
+        socket.send('{"client_name": "HTMLPage"}');
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.region && data.year) {
+            console.log("Loading:", data.region, data.year);
+            const v1 = document.getElementById("gameStartVideo");
+            if (v1) v1.remove();
+
+            const v2 = document.querySelector('video[src*="Video_2.mp4"]');
+            if (v2) v2.remove();
+
+            const v3 = document.querySelector('video[src*="Video_3.mp4"]');
+            if (v3) v3.remove();
+
+            console.log(miniGamePlaying);
+
+            if (miniGamePlaying === "mg1") {
+              miniGameHandler(miniGamePlaying, data.region);
+            } else if (miniGamePlaying === "mg2") {
+              miniGameHandler(miniGamePlaying);
+            } else if (miniGamePlaying === "mg3") {
+              miniGameHandler(miniGamePlaying, data.year);
+            } else {
+              const thirdVideo = document.createElement("video");
+              thirdVideo.src = "Videos/Debut_jeu/Video_3.mp4";
+              thirdVideo.autoplay = true;
+              thirdVideo.controls = true;
+              thirdVideo.style.zIndex = 999;
+              thirdVideo.classList.add("carousel-item", "visible");
+              document.body.appendChild(thirdVideo);
+
+              thirdVideo.onended = () => {
+                thirdVideo.remove();
+                startCarousel(data.region, data.year);
+              };
+            }
+          }
+        } catch (err) {
+          console.error("Invalid message received:", event.data);
+        }
+      };
+
+      socket.onerror = (error) => {
+        console.error("WebSocket Error:", error);
+      };
+
+      socket.onclose = () => {
+        console.warn("WebSocket connection closed");
+      };
+    </script>
+  </body>
+</html>
