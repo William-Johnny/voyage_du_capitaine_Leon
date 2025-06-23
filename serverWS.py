@@ -112,19 +112,22 @@ class WSServer:
             obj = presentation_message_from_dict(json.loads(message))
             self.client_dict[client['id']] = obj.client_name
             self.client_obj_dict[client['id']] = client
-            self.server.send_message(client,f"PRESENTATION_OK")
+            #self.server.send_message(client,f"PRESENTATION_OK")
         else:
             obj = message_from_dict(json.loads(message))
             print(f"Message reçu de {self.client_dict[client['id']]} pour {obj.dest} : {obj.region} {obj.year}")
             
             if self.client_exists(obj.dest) == False:
-                self.server.send_message(client,f"DEST_UNAVAILABLE")
+                #self.server.send_message(client,f"DEST_UNAVAILABLE")
+                print("DEST_UNAVAILABLE")
             else:
                 dest_client = self.client_obj_dict[self.get_client_from_name(obj.dest)]
                 self.server.send_message(dest_client,message)
-                self.server.send_message(client,f"MESSAGE_SENT")
-                
-                
+                print(obj.region)
+                if obj.region != "Unknown Region":
+                    print("ok")
+                    esp_client = self.client_obj_dict[self.get_client_from_name("ESP32")]
+                    self.server.send_message(esp_client, json.dumps({"rfid": obj.region}))
                 
     def get_client_from_name(self, name):
         for key in self.client_dict:
