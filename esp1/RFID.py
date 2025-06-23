@@ -4,13 +4,11 @@ from mfrc522 import MFRC522
 
 class RFID:
     def __init__(self, wsClient):
-        # SPI bus setup (shared)
         self.sck = Pin(18, Pin.OUT)
         self.mosi = Pin(23, Pin.OUT)
         self.miso = Pin(19, Pin.OUT)
         self.spi = SPI(baudrate=100000, polarity=0, phase=0, sck=self.sck, mosi=self.mosi, miso=self.miso)
         
-        # Each reader pin paired with its region name
         self.sda_pins = [
             {"pin": Pin(5, Pin.OUT), "region": "ile-de-france"},
             {"pin": Pin(17, Pin.OUT), "region": "auvergne-rhone-alpes"},
@@ -31,7 +29,6 @@ class RFID:
         self.year = ""
 
     def check_reader(self, cs_pin, region_name):
-        # Deselect all readers except this one
         for reader in self.sda_pins:
             reader["pin"].value(1)
         cs_pin.value(0)
@@ -51,7 +48,6 @@ class RFID:
                     self.tag_states[region_name] = True
                 return True
 
-        # No tag currently present — reset state if previously detected
         if self.tag_states[region_name]:
             self.tag_states[region_name] = False
 
@@ -84,5 +80,5 @@ class RFID:
             self.wsClient.send("ESP32-2", "Unknown Region", "")
             self.wsClient.send("ESP32-3", "Unknown Region", "")
             self.poll_rfid()
-            # Optionally you can notify HTML or other clients here
+           
         return False
