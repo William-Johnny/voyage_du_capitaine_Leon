@@ -125,7 +125,6 @@ class WSServer:
                 self.server.send_message(dest_client,message)
                 print(obj.region)
                 if obj.region != "Unknown Region":
-                    print("ok")
                     esp_client = self.client_obj_dict[self.get_client_from_name("ESP32")]
                     self.server.send_message(esp_client, json.dumps({"rfid": obj.region}))
                 
